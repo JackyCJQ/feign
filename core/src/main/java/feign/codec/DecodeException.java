@@ -29,6 +29,7 @@ public class DecodeException extends FeignException {
    * @param message the reason for the failure.
    */
   public DecodeException(int status, String message) {
+
     super(status, checkNotNull(message, "message"));
   }
 
