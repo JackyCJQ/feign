@@ -34,7 +34,7 @@ final class Base64 {
         return decode(in, in.length);
     }
 
-    //揭秘
+    //解密
     public static byte[] decode(byte[] in, int len) {
         // approximate output length
         int length = len / 4 * 3;

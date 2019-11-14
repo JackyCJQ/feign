@@ -86,8 +86,7 @@ public abstract class Feign {
 
   public static class Builder {
 
-    private final List<RequestInterceptor> requestInterceptors =
-        new ArrayList<RequestInterceptor>();
+    private final List<RequestInterceptor> requestInterceptors = new ArrayList<RequestInterceptor>();
     private Logger.Level logLevel = Logger.Level.NONE;
     private Contract contract = new Contract.Default();
     private Client client = new Client.Default(null, null);
