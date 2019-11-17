@@ -20,9 +20,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
-import static feign.Util.UTF_8;
-import static feign.Util.decodeOrDefault;
-import static feign.Util.valuesOrEmpty;
+import static feign.Util.*;
 
 /**
  * Simple logging abstraction for debug messages. Adapted from {@code retrofit.RestAdapter.Log}.
@@ -30,8 +28,7 @@ import static feign.Util.valuesOrEmpty;
 public abstract class Logger {
 
     protected static String methodTag(String configKey) {
-        return new StringBuilder().append('[').append(configKey.substring(0, configKey.indexOf('(')))
-                .append("] ").toString();
+        return new StringBuilder().append('[').append(configKey.substring(0, configKey.indexOf('('))).append("] ").toString();
     }
 
     /**
@@ -39,8 +36,8 @@ public abstract class Logger {
      * request and response text.
      *
      * @param configKey value of {@link Feign#configKey(Class, java.lang.reflect.Method)}
-     * @param format {@link java.util.Formatter format string}
-     * @param args arguments applied to {@code format}
+     * @param format    {@link java.util.Formatter format string}
+     * @param args      arguments applied to {@code format}
      */
     protected abstract void log(String configKey, String format, Object... args);
 
@@ -211,6 +208,9 @@ public abstract class Logger {
         }
     }
 
+    /**
+     * 默认不打印任何东西
+     */
     public static class NoOpLogger extends Logger {
 
         @Override

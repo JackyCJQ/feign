@@ -203,6 +203,7 @@ public final class Types {
   static Type resolve(Type context, Class<?> contextRawType, Type toResolve) {
     // This implementation is made a little more complicated in an attempt to avoid object-creation.
     while (true) {
+      //如果是类型变量 则
       if (toResolve instanceof TypeVariable) {
         TypeVariable<?> typeVariable = (TypeVariable<?>) toResolve;
         toResolve = resolveTypeVariable(context, contextRawType, typeVariable);

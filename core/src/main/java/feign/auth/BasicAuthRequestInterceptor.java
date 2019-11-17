@@ -29,6 +29,7 @@ public class BasicAuthRequestInterceptor implements RequestInterceptor {
     private final String headerValue;
 
     public BasicAuthRequestInterceptor(String username, String password) {
+
         this(username, password, ISO_8859_1);
     }
 
