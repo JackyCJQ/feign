@@ -92,7 +92,7 @@ public class SOAPFaultDecoderTest {
   public void errorDecoderReturnsFeignExceptionOnEmptyFault() throws IOException {
     Response response = Response.builder()
         .status(500)
-        .reason("Internal Server Error")
+        .reason("Internal Server error")
         .request(Request.create(HttpMethod.GET, "/api", Collections.emptyMap(), null, Util.UTF_8))
         .headers(Collections.emptyMap())
         .body("<?xml version = '1.0' encoding = 'UTF-8'?>\n" +

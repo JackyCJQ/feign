@@ -30,12 +30,6 @@ public final class BodyTemplate extends Template {
     private static final String JSON_TOKEN_END_ENCODED = "%7D";
     private boolean json = false;
 
-    /**
-     * Create a new Body Template.
-     *
-     * @param template to parse.
-     * @return a Body Template instance.
-     */
     public static BodyTemplate create(String template) {
         return new BodyTemplate(template, Util.UTF_8);
     }

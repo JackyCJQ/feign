@@ -65,6 +65,8 @@ public interface Client {
             //利用jdk获取一个连接
             final HttpURLConnection connection =
                     (HttpURLConnection) new URL(request.url()).openConnection();
+
+
             if (connection instanceof HttpsURLConnection) {
                 HttpsURLConnection sslCon = (HttpsURLConnection) connection;
                 if (sslContextFactory != null) {
@@ -121,6 +123,7 @@ public interface Client {
                 }
                 //获取返回的结果
                 connection.setDoOutput(true);
+                ///
                 OutputStream out = connection.getOutputStream();
                 //根据压缩获取对应的压缩结果
                 if (gzipEncodedRequest) {

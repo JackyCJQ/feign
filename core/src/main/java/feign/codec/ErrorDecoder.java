@@ -51,7 +51,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * </pre>
  * <p>
  * <p/>
- * <b>Error handling</b>
+ * <b>error handling</b>
  * <p>
  * <p/>
  * Responses where {@link Response#status()} is not in the 2xx range are classified as errors,

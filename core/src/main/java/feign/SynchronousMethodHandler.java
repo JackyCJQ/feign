@@ -29,6 +29,7 @@ import static feign.FeignException.errorReading;
 import static feign.Util.checkNotNull;
 import static feign.Util.ensureClosed;
 
+//同步方法处理器
 final class SynchronousMethodHandler implements MethodHandler {
 
     private static final long MAX_RESPONSE_BUFFER_SIZE = 8192L;
@@ -48,12 +49,20 @@ final class SynchronousMethodHandler implements MethodHandler {
     private final boolean closeAfterDecode;
     private final ExceptionPropagationPolicy propagationPolicy;
 
-    private SynchronousMethodHandler(Target<?> target, Client client, Retryer retryer,
-                                     List<RequestInterceptor> requestInterceptors, Logger logger,
-                                     Logger.Level logLevel, MethodMetadata metadata,
-                                     RequestTemplate.Factory buildTemplateFromArgs, Options options,
-                                     Decoder decoder, ErrorDecoder errorDecoder, boolean decode404,
-                                     boolean closeAfterDecode, ExceptionPropagationPolicy propagationPolicy) {
+    private SynchronousMethodHandler(Target<?> target,
+                                     Client client,
+                                     Retryer retryer,
+                                     List<RequestInterceptor> requestInterceptors,
+                                     Logger logger,
+                                     Logger.Level logLevel,
+                                     MethodMetadata metadata,
+                                     RequestTemplate.Factory buildTemplateFromArgs,
+                                     Options options,
+                                     Decoder decoder,
+                                     ErrorDecoder errorDecoder,
+                                     boolean decode404,
+                                     boolean closeAfterDecode,
+                                     ExceptionPropagationPolicy propagationPolicy) {
         this.target = checkNotNull(target, "target");
         this.client = checkNotNull(client, "client for %s", target);
         this.retryer = checkNotNull(retryer, "retryer for %s", target);
@@ -80,9 +89,11 @@ final class SynchronousMethodHandler implements MethodHandler {
                 return executeAndDecode(template);
             } catch (RetryableException e) {
                 try {
+                    //如果出现了异常
                     retryer.continueOrPropagate(e);
                 } catch (RetryableException th) {
                     Throwable cause = th.getCause();
+                    //如果不在包裹 就直接抛出异常
                     if (propagationPolicy == UNWRAP && cause != null) {
                         throw cause;
                     } else {
@@ -173,8 +184,10 @@ final class SynchronousMethodHandler implements MethodHandler {
         return target.apply(template);
     }
 
+    //解码response
     Object decode(Response response) throws Throwable {
         try {
+            //方法的返回类型
             return decoder.decode(response, metadata.returnType());
         } catch (FeignException e) {
             throw e;
@@ -183,6 +196,7 @@ final class SynchronousMethodHandler implements MethodHandler {
         }
     }
 
+    //工厂模式
     static class Factory {
 
         private final Client client;

@@ -11,11 +11,12 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package feign.example.wikipedia;
+package feign.example.wiki;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 
 abstract class ResponseAdapter<X> extends TypeAdapter<WikipediaExample.Response<X>> {

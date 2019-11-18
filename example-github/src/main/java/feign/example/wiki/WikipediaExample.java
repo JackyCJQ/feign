@@ -11,20 +11,21 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package feign.example.wikipedia;
+package feign.example.wiki;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import feign.Feign;
 import feign.Logger;
 import feign.Param;
 import feign.RequestLine;
 import feign.gson.GsonDecoder;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class WikipediaExample {
 

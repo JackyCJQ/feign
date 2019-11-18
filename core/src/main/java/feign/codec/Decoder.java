@@ -24,37 +24,12 @@ import java.lang.reflect.Type;
  * Decodes an HTTP response into a single object of the given type. Invoked when
  * Response.status() is in the 2xx range and the return type is neither  void nor
  * Response.
- * Example Implementation:<br>
- * <p>
- * public class GsonDecoder implements Decoder {
- * private final Gson gson = new Gson();
- * public Object decode(Response response, Type type) throws IOException {
- * try {
- * return gson.fromJson(response.body().asReader(), type);
- * } catch (JsonIOException e) {
- * if (e.getCause() != null &amp;&amp;
- * e.getCause() instanceof IOException) {
- * throw IOException.class.cast(e.getCause());
- * }
- * throw e;
- * }
- * }
- * }
  */
 public interface Decoder {
 
     /**
      * Decodes an http response into an object corresponding to its
-     * {@link java.lang.reflect.Method#getGenericReturnType() generic return type}. If you need to
-     * wrap exceptions, please do so via {@link DecodeException}.
-     *
-     * @param response the response to decode
-     * @param type     {@link java.lang.reflect.Method#getGenericReturnType() generic return type} of the
-     *                 method corresponding to this {@code response}.
-     * @return instance of {@code type}
-     * @throws IOException     will be propagated safely to the caller.
-     * @throws DecodeException when decoding failed due to a checked exception besides IOException.
-     * @throws FeignException  when decoding succeeds, but conveys the operation failed.
+     * {@link java.lang.reflect.Method#getGenericReturnType() generic return type}.
      */
     Object decode(Response response, Type type) throws IOException, DecodeException, FeignException;
 
@@ -65,13 +40,17 @@ public interface Decoder {
 
         @Override
         public Object decode(Response response, Type type) throws IOException {
+            //如果是返回404或204则返回null
             if (response.status() == 404 || response.status() == 204)
                 return Util.emptyValueOf(type);
+            //如果没有返回则也是null
             if (response.body() == null)
                 return null;
+            //如果是字节数组，则返回字节数组
             if (byte[].class.equals(type)) {
                 return Util.toByteArray(response.body().asInputStream());
             }
+            //转化为String类型
             return super.decode(response, type);
         }
     }
