@@ -44,6 +44,7 @@ public final class OptionalDecoder implements Decoder {
         return Optional.ofNullable(delegate.decode(response, enclosedType));
     }
 
+    //判断是否是参数化类型的数据
     static boolean isOptional(Type type) {
         if (!(type instanceof ParameterizedType)) {
             return false;

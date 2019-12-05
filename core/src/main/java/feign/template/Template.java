@@ -41,9 +41,13 @@ public class Template {
     static final String COLLECTION_DELIMITER = ";";
 
     private static final Logger logger = Logger.getLogger(Template.class.getName());
+    //通过正则进行区分
     private static final Pattern QUERY_STRING_PATTERN = Pattern.compile("(?<!\\{)(\\?)");
+    //用户定义的模板请求url
     private final String template;
+    //是否允许存在未被解析的模板
     private final boolean allowUnresolved;
+    //编码的选择
     private final EncodingOptions encode;
     private final boolean encodeSlash;
     private final Charset charset;
@@ -52,16 +56,17 @@ public class Template {
     /**
      * Create a new Template.
      *
-     * @param value of the template.
+     * @param value           of the template.
      * @param allowUnresolved if unresolved expressions should remain.
-     * @param encode all values.
-     * @param encodeSlash if slash characters should be encoded.
+     * @param encode          all values.
+     * @param encodeSlash     if slash characters should be encoded.
      */
     Template(String value, ExpansionOptions allowUnresolved, EncodingOptions encode, boolean encodeSlash, Charset charset) {
         if (value == null) {
             throw new IllegalArgumentException("template is required.");
         }
         this.template = value;
+        //允许或者是不允许
         this.allowUnresolved = ExpansionOptions.ALLOW_UNRESOLVED == allowUnresolved;
         this.encode = encode;
         this.encodeSlash = encodeSlash;
@@ -82,6 +87,7 @@ public class Template {
         /* resolve all expressions within the template */
         StringBuilder resolved = new StringBuilder();
         for (TemplateChunk chunk : this.templateChunks) {
+            //如果是表达式？？进行解析
             if (chunk instanceof Expression) {
                 String resolvedExpression = this.resolveExpression((Expression) chunk, variables);
                 if (resolvedExpression != null) {
@@ -97,10 +103,12 @@ public class Template {
 
     protected String resolveExpression(Expression expression, Map<String, ?> variables) {
         String resolved = null;
+        //从变量中获取到表达式的值
         Object value = variables.get(expression.getName());
         if (value != null) {
             String expanded = expression.expand(value, this.encode.isEncodingRequired());
             if (Util.isNotBlank(expanded)) {
+                //是否需要把url重的/进行编码替换
                 if (this.encodeSlash) {
                     logger.fine("Explicit slash decoding specified, decoding all slashes in uri");
                     expanded = expanded.replaceAll("/", "%2F");
@@ -207,7 +215,7 @@ public class Template {
      * Parse a template fragment.
      *
      * @param fragment to parse
-     * @param query if the fragment is part of a query string.
+     * @param query    if the fragment is part of a query string.
      */
     private void parseFragment(String fragment, boolean query) {
         ChunkTokenizer tokenizer = new ChunkTokenizer(fragment);

@@ -29,6 +29,12 @@ import static feign.Util.valuesOrEmpty;
  */
 public final class Request {
 
+    private final HttpMethod httpMethod;//请求的方法
+    private final String url; //请求的url
+    private final Map<String, Collection<String>> headers;//请求头
+    private final Body body; //请求体
+
+
     public static class Body {
 
         private final byte[] data;
@@ -55,6 +61,7 @@ public final class Request {
             return bodyTemplate.getVariables();
         }
 
+        //bodyTemplate为null
         public static Request.Body encoded(byte[] bodyData, Charset encoding) {
             return new Request.Body(bodyData, encoding, null);
         }
@@ -143,11 +150,6 @@ public final class Request {
         return new Request(httpMethod, url, headers, body);
     }
 
-    private final HttpMethod httpMethod;//请求的方法
-    private final String url; //请求的url
-    private final Map<String, Collection<String>> headers;//请求头
-    private final Body body; //请求体
-
     Request(HttpMethod method, String url, Map<String, Collection<String>> headers, Body body) {
         this.httpMethod = checkNotNull(method, "httpMethod of %s", method.name());
         this.url = checkNotNull(url, "url");
@@ -163,12 +165,10 @@ public final class Request {
         return this.httpMethod;
     }
 
-    /* Fully resolved URL including query. */
     public String url() {
         return url;
     }
 
-    /* Ordered list of headers that will be sent to the server. */
     public Map<String, Collection<String>> headers() {
         return headers;
     }

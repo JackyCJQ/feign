@@ -38,13 +38,15 @@ import static feign.Util.*;
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
 public final class RequestTemplate implements Serializable {
-
+  //匹配?之后的数据
   private static final Pattern QUERY_STRING_PATTERN = Pattern.compile("(?<!\\{)\\?");
+  //
   private final Map<String, QueryTemplate> queries = new LinkedHashMap<>();
   private final Map<String, HeaderTemplate> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   private String target;
   private String fragment;
   private boolean resolved = false;
+
   private UriTemplate uriTemplate;
   private HttpMethod method;
   private transient Charset charset = Util.UTF_8;

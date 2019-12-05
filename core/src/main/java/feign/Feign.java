@@ -61,10 +61,6 @@ public abstract class Feign {
         return builder.append(')').toString();
     }
 
-    /**
-     * Returns a new instance of an HTTP API, defined by annotations in the {@link Feign Contract},
-     * for the specified {@code target}. You should cache this result.
-     */
     public abstract <T> T newInstance(Target<T> target);
 
     public static class Builder {
@@ -96,66 +92,79 @@ public abstract class Feign {
         //异常传递策略
         private ExceptionPropagationPolicy propagationPolicy = NONE;
 
+        //日志的级别
         public Builder logLevel(Logger.Level logLevel) {
             this.logLevel = logLevel;
             return this;
         }
 
+        //注解解析器
         public Builder contract(Contract contract) {
             this.contract = contract;
             return this;
         }
 
+        //http执行器
         public Builder client(Client client) {
             this.client = client;
             return this;
         }
 
+        //错误重试
         public Builder retryer(Retryer retryer) {
             this.retryer = retryer;
             return this;
         }
 
+        //日志
         public Builder logger(Logger logger) {
             this.logger = logger;
             return this;
         }
 
+        //编码器
         public Builder encoder(Encoder encoder) {
             this.encoder = encoder;
             return this;
         }
 
+        //解码器
         public Builder decoder(Decoder decoder) {
             this.decoder = decoder;
             return this;
         }
 
+        //请求map编码器
         public Builder queryMapEncoder(QueryMapEncoder queryMapEncoder) {
             this.queryMapEncoder = queryMapEncoder;
             return this;
         }
 
+        //匹配和解码
         public Builder mapAndDecode(ResponseMapper mapper, Decoder decoder) {
             this.decoder = new ResponseMappingDecoder(mapper, decoder);
             return this;
         }
 
+        //404处理器
         public Builder decode404() {
             this.decode404 = true;
             return this;
         }
 
+        //错误解码器
         public Builder errorDecoder(ErrorDecoder errorDecoder) {
             this.errorDecoder = errorDecoder;
             return this;
         }
 
+        //错误解码器
         public Builder options(Options options) {
             this.options = options;
             return this;
         }
 
+        //请求拦截器
         public Builder requestInterceptor(RequestInterceptor requestInterceptor) {
             this.requestInterceptors.add(requestInterceptor);
             return this;
@@ -181,20 +190,24 @@ public abstract class Feign {
             return this;
         }
 
+        //在获取到结果之后是否要关闭连接
         public Builder doNotCloseAfterDecode() {
             this.closeAfterDecode = false;
             return this;
         }
 
+        //异常传递策略
         public Builder exceptionPropagationPolicy(ExceptionPropagationPolicy propagationPolicy) {
             this.propagationPolicy = propagationPolicy;
             return this;
         }
 
+        //目标接口，硬编码的url
         public <T> T target(Class<T> apiType, String url) {
             return target(new HardCodedTarget<T>(apiType, url));
-        }//硬编码的url
+        }
 
+        //目标接口
         public <T> T target(Target<T> target) {
             return build().newInstance(target);
         }

@@ -83,6 +83,7 @@ public interface Encoder {
 
         @Override
         public void encode(Object object, Type bodyType, RequestTemplate template) {
+            //直接调用的toString方法
             if (bodyType == String.class) {
                 template.body(object.toString());
             } else if (bodyType == byte[].class) {

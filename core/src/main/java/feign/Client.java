@@ -39,7 +39,12 @@ import static java.lang.String.format;
 public interface Client {
 
     /**
-     * Executes a request against its {@link Request#url() url} and returns a response.
+     * 实际执行http请求
+     *
+     * @param request
+     * @param options
+     * @return
+     * @throws IOException
      */
     Response execute(Request request, Options options) throws IOException;
 
@@ -53,6 +58,7 @@ public interface Client {
             this.hostnameVerifier = hostnameVerifier;
         }
 
+        //实际执行http过程
         @Override
         public Response execute(Request request, Options options) throws IOException {
             //转换参数并进行请求
@@ -61,12 +67,12 @@ public interface Client {
             return convertResponse(connection, request);
         }
 
+        //转化并发送请求
         HttpURLConnection convertAndSend(Request request, Options options) throws IOException {
-            //利用jdk获取一个连接
-            final HttpURLConnection connection =
-                    (HttpURLConnection) new URL(request.url()).openConnection();
+            //利用jdk获取一个连接，根据设置的URL
+            final HttpURLConnection connection = (HttpURLConnection) new URL(request.url()).openConnection();
 
-
+            //特殊处理https请求
             if (connection instanceof HttpsURLConnection) {
                 HttpsURLConnection sslCon = (HttpsURLConnection) connection;
                 if (sslContextFactory != null) {
@@ -78,6 +84,7 @@ public interface Client {
             }
             connection.setConnectTimeout(options.connectTimeoutMillis());
             connection.setReadTimeout(options.readTimeoutMillis());
+            //设置是否允许用户交互
             connection.setAllowUserInteraction(false);
             connection.setInstanceFollowRedirects(options.isFollowRedirects());
             //设置请求的方法 post  get等方式
@@ -92,6 +99,7 @@ public interface Client {
 
             boolean hasAcceptHeader = false;
             Integer contentLength = null;
+            //请求头中的设置
             for (String field : request.headers().keySet()) {
                 if (field.equalsIgnoreCase("Accept")) {
                     hasAcceptHeader = true;
@@ -143,8 +151,11 @@ public interface Client {
             return connection;
         }
 
+        //获取返回结果
         Response convertResponse(HttpURLConnection connection, Request request) throws IOException {
+            //返回码
             int status = connection.getResponseCode();
+            //获取返回消息
             String reason = connection.getResponseMessage();
 
             if (status < 0) {
@@ -152,7 +163,9 @@ public interface Client {
                         connection.getRequestMethod(), connection.getURL()));
             }
 
+            //在封装返回结果中的header
             Map<String, Collection<String>> headers = new LinkedHashMap<String, Collection<String>>();
+            //获取
             for (Map.Entry<String, List<String>> field : connection.getHeaderFields().entrySet()) {
                 // response message
                 if (field.getKey() != null) {
@@ -164,7 +177,9 @@ public interface Client {
             if (length == -1) {
                 length = null;
             }
+            //
             InputStream stream;
+            //获取返回流
             if (status >= 400) {
                 stream = connection.getErrorStream();
             } else {

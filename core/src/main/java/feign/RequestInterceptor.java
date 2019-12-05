@@ -14,6 +14,7 @@
 package feign;
 
 /**
+ * 请求拦截器
  * Zero or more {@code RequestInterceptors} may be configured for purposes such as adding headers to
  * all requests. No guarantees are give with regards to the order that interceptors are applied.
  * Once interceptors are applied, {@link Target#apply(RequestTemplate)} is called to create the

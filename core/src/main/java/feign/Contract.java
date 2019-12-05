@@ -13,9 +13,6 @@
  */
 package feign;
 
-import static feign.Util.checkState;
-import static feign.Util.emptyToNull;
-
 import feign.Request.HttpMethod;
 
 import java.lang.annotation.Annotation;
@@ -24,23 +21,21 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static feign.Util.checkState;
+import static feign.Util.emptyToNull;
+
 /**
+ * 注解解析器
  * Defines what annotations and values are valid on interfaces.
  */
 public interface Contract {
 
     /**
-     * Called to parse the methods in the class that are linked to HTTP requests.
-     *
-     * @param targetType {@link feign.Target#type() type} of the Feign interface.
+     * 把方法解析成MethodMetadata
      */
     List<MethodMetadata> parseAndValidatateMetadata(Class<?> targetType);
 
@@ -58,14 +53,13 @@ public interface Contract {
             if (targetType.getInterfaces().length == 1) {
                 //还必须仅仅支持继承一层的接口
                 checkState(targetType.getInterfaces()[0].getInterfaces().length == 0,
-                        "Only single-level inheritance supported: %s",
-                        targetType.getSimpleName());
+                        "Only single-level inheritance supported: %s", targetType.getSimpleName());
             }
             Map<String, MethodMetadata> result = new LinkedHashMap<String, MethodMetadata>();
+
             for (Method method : targetType.getMethods()) {
-                //如果不是Object中的方法，
-                if (method.getDeclaringClass() == Object.class ||
-                        (method.getModifiers() & Modifier.STATIC) != 0 || Util.isDefault(method)) {
+                //如果是Object中的方法，
+                if (method.getDeclaringClass() == Object.class || (method.getModifiers() & Modifier.STATIC) != 0 || Util.isDefault(method)) {
                     continue;
                 }
                 //解析方法获取元数据
@@ -79,34 +73,30 @@ public interface Contract {
         }
 
         /**
-         * @deprecated use {@link #parseAndValidateMetadata(Class, Method)} instead.
-         */
-        @Deprecated
-        public MethodMetadata parseAndValidatateMetadata(Method method) {
-            return parseAndValidateMetadata(method.getDeclaringClass(), method);
-        }
-
-        /**
          * 解析接口上的方法
          * Called indirectly by {@link #parseAndValidatateMetadata(Class)}.
          */
         protected MethodMetadata parseAndValidateMetadata(Class<?> targetType, Method method) {
             MethodMetadata data = new MethodMetadata();
+            //返回的类型
             data.returnType(Types.resolve(targetType, targetType, method.getGenericReturnType()));
             data.configKey(Feign.configKey(targetType, method));
 
             if (targetType.getInterfaces().length == 1) {
+                //解析接口上的注解
                 processAnnotationOnClass(data, targetType.getInterfaces()[0]);
             }
+            //解析当前类上的注解
             processAnnotationOnClass(data, targetType);
 
-
+            //解析方法上的注解
             for (Annotation methodAnnotation : method.getAnnotations()) {
                 processAnnotationOnMethod(data, methodAnnotation, method);
             }
             checkState(data.template().method() != null,
                     "Method %s not annotated with HTTP method type (ex. GET, POST)",
                     method.getName());
+            //获取方法上的信息
             Class<?>[] parameterTypes = method.getParameterTypes();
             Type[] genericParameterTypes = method.getGenericParameterTypes();
 
@@ -115,6 +105,7 @@ public interface Contract {
             for (int i = 0; i < count; i++) {
                 boolean isHttpAnnotation = false;
                 if (parameterAnnotations[i] != null) {
+                    //获取参数上的注解
                     isHttpAnnotation = processAnnotationsOnParameter(data, parameterAnnotations[i], i);
                 }
                 if (parameterTypes[i] == URI.class) {
@@ -177,40 +168,16 @@ public interface Contract {
             }
         }
 
-
-        /**
-         * Called by parseAndValidateMetadata twice, first on the declaring class, then on the target
-         * type (unless they are the same).
-         *
-         * @param data metadata collected so far relating to the current java method.
-         * @param clz  the class to process
-         */
         protected abstract void processAnnotationOnClass(MethodMetadata data, Class<?> clz);
 
-        /**
-         * @param data       metadata collected so far relating to the current java method.
-         * @param annotation annotations present on the current method annotation.
-         * @param method     method currently being processed.
-         */
         protected abstract void processAnnotationOnMethod(MethodMetadata data,
                                                           Annotation annotation,
                                                           Method method);
 
-        /**
-         * @param data        metadata collected so far relating to the current java method.
-         * @param annotations annotations present on the current parameter annotation.
-         * @param paramIndex  if you find a name in {@code annotations}, call
-         *                    {@link #nameParam(MethodMetadata, String, int)} with this as the last parameter.
-         * @return true if you called {@link #nameParam(MethodMetadata, String, int)} after finding an
-         * http-relevant annotation.
-         */
         protected abstract boolean processAnnotationsOnParameter(MethodMetadata data,
                                                                  Annotation[] annotations,
                                                                  int paramIndex);
 
-        /**
-         * links a parameter name to its index in the method signature.
-         */
         protected void nameParam(MethodMetadata data, String name, int i) {
             Collection<String> names =
                     data.indexToName().containsKey(i) ? data.indexToName().get(i) : new ArrayList<String>();
@@ -223,15 +190,18 @@ public interface Contract {
 
         static final Pattern REQUEST_LINE_PATTERN = Pattern.compile("^([A-Z]+)[ ]*(.*)$");
 
+        //header只能加在类上
         @Override
         protected void processAnnotationOnClass(MethodMetadata data, Class<?> targetType) {
+            //如果接口上面有@Header注解
             if (targetType.isAnnotationPresent(Headers.class)) {
                 String[] headersOnType = targetType.getAnnotation(Headers.class).value();
                 checkState(headersOnType.length > 0, "Headers annotation was empty on type %s.",
                         targetType.getName());
                 Map<String, Collection<String>> headers = toMap(headersOnType);
                 headers.putAll(data.template().headers());
-                data.template().headers(null); // to clear
+                //先清空在设置
+                data.template().headers(null);
                 data.template().headers(headers);
             }
         }
@@ -240,12 +210,15 @@ public interface Contract {
         protected void processAnnotationOnMethod(MethodMetadata data,
                                                  Annotation methodAnnotation,
                                                  Method method) {
+            //获取注解的类型
             Class<? extends Annotation> annotationType = methodAnnotation.annotationType();
             if (annotationType == RequestLine.class) {
+                //可以强制转化
                 String requestLine = RequestLine.class.cast(methodAnnotation).value();
                 checkState(emptyToNull(requestLine) != null,
                         "RequestLine annotation was empty on method %s.", method.getName());
 
+                //注解分为两个部分
                 Matcher requestLineMatcher = REQUEST_LINE_PATTERN.matcher(requestLine);
                 if (!requestLineMatcher.find()) {
                     throw new IllegalStateException(String.format(
@@ -256,8 +229,7 @@ public interface Contract {
                     data.template().uri(requestLineMatcher.group(2));
                 }
                 data.template().decodeSlash(RequestLine.class.cast(methodAnnotation).decodeSlash());
-                data.template()
-                        .collectionFormat(RequestLine.class.cast(methodAnnotation).collectionFormat());
+                data.template().collectionFormat(RequestLine.class.cast(methodAnnotation).collectionFormat());
 
             } else if (annotationType == Body.class) {
                 String body = Body.class.cast(methodAnnotation).value();
@@ -315,8 +287,7 @@ public interface Contract {
         }
 
         private static Map<String, Collection<String>> toMap(String[] input) {
-            Map<String, Collection<String>> result =
-                    new LinkedHashMap<String, Collection<String>>(input.length);
+            Map<String, Collection<String>> result = new LinkedHashMap<String, Collection<String>>(input.length);
             for (String header : input) {
                 int colon = header.indexOf(':');
                 String name = header.substring(0, colon);

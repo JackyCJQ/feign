@@ -273,8 +273,7 @@ public final class Types {
     }
   }
 
-  private static Type resolveTypeVariable(
-                                          Type context,
+  private static Type resolveTypeVariable(Type context,
                                           Class<?> contextRawType,
                                           TypeVariable<?> unknown) {
     Class<?> declaredByRaw = declaringClassOf(unknown);

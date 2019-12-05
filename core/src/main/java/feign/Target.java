@@ -18,13 +18,13 @@ import static feign.Util.emptyToNull;
 
 public interface Target<T> {
 
-    /* The type of the interface this target applies to. ex. {@code Route53}. */
+    /* The type of the interface this target applies to. */
     Class<T> type();
 
-    /* configuration key associated with this target. For example, {@code route53}. */
+    /* configuration key associated with this target. */
     String name();
 
-    /* base HTTP URL of the target. For example, {@code https://api/v2}. */
+    /* base HTTP URL of the target. */
     String url();
 
     /**
@@ -76,7 +76,7 @@ public interface Target<T> {
         @Override
         public Request apply(RequestTemplate input) {
             if (input.url().indexOf("http") != 0) {
-                //设置请求服务的地址
+                //直接请求地址
                 input.target(url());
             }
             return input.request();

@@ -52,8 +52,10 @@ public class ReflectiveFeign extends Feign {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T newInstance(Target<T> target) {
+        //
         Map<String, MethodHandler> nameToHandler = targetToHandlersByName.apply(target);
         Map<Method, MethodHandler> methodToHandler = new LinkedHashMap<Method, MethodHandler>();
+        //默认类型处理器
         List<DefaultMethodHandler> defaultMethodHandlers = new LinkedList<DefaultMethodHandler>();
 
         for (Method method : target.type().getMethods()) {
@@ -68,8 +70,8 @@ public class ReflectiveFeign extends Feign {
             }
         }
         InvocationHandler handler = factory.create(target, methodToHandler);
-        T proxy = (T) Proxy.newProxyInstance(target.type().getClassLoader(),
-                new Class<?>[]{target.type()}, handler);
+        //创建一个代理实现类
+        T proxy = (T) Proxy.newProxyInstance(target.type().getClassLoader(), new Class<?>[]{target.type()}, handler);
 
         for (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) {
             defaultMethodHandler.bindTo(proxy);
@@ -77,6 +79,7 @@ public class ReflectiveFeign extends Feign {
         return proxy;
     }
 
+    //创建的默认代理类实现
     static class FeignInvocationHandler implements InvocationHandler {
 
         private final Target target;
@@ -91,8 +94,7 @@ public class ReflectiveFeign extends Feign {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if ("equals".equals(method.getName())) {
                 try {
-                    Object otherHandler =
-                            args.length > 0 && args[0] != null ? Proxy.getInvocationHandler(args[0]) : null;
+                    Object otherHandler = args.length > 0 && args[0] != null ? Proxy.getInvocationHandler(args[0]) : null;
                     return equals(otherHandler);
                 } catch (IllegalArgumentException e) {
                     return false;
@@ -155,12 +157,14 @@ public class ReflectiveFeign extends Feign {
 
         //传递一个定义的接口
         public Map<String, MethodHandler> apply(Target key) {
-            //解析接口上注解
+            //利用解携解析接口上注解
             List<MethodMetadata> metadata = contract.parseAndValidatateMetadata(key.type());
             //方法与其对应的方法处理器
             Map<String, MethodHandler> result = new LinkedHashMap<String, MethodHandler>();
+            //遍历每个方法
             for (MethodMetadata md : metadata) {
                 BuildTemplateByResolvingArgs buildTemplate;
+                //如果数据不为空并且
                 if (!md.formParams().isEmpty() && md.template().bodyTemplate() == null) {
                     buildTemplate = new BuildFormEncodedTemplateFromArgs(md, encoder, queryMapEncoder);
                 } else if (md.bodyIndex() != null) {
@@ -168,8 +172,8 @@ public class ReflectiveFeign extends Feign {
                 } else {
                     buildTemplate = new BuildTemplateByResolvingArgs(md, queryMapEncoder);
                 }
-                result.put(md.configKey(),
-                        factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
+                //创建本地缓存
+                result.put(md.configKey(), factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
             }
             return result;
         }

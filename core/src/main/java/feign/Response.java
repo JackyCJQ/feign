@@ -24,13 +24,14 @@ import static feign.Util.*;
  */
 public final class Response implements Closeable {
 
-    private final int status;
-    private final String reason;
-    private final Map<String, Collection<String>> headers;
-    private final Body body;
-    private final Request request;
+    private final int status;//返回的状态码
+    private final String reason;//返回的文案
+    private final Map<String, Collection<String>> headers;//返回头
+    private final Body body;//返回头
+    private final Request request; //请求
 
     private Response(Builder builder) {
+        //保留请求
         checkState(builder.request != null, "original request is required");
         this.status = builder.status;
         this.request = builder.request;
@@ -155,16 +156,8 @@ public final class Response implements Closeable {
 
     public interface Body extends Closeable {
 
-        /**
-         * length in bytes, if known. Null if unknown or greater than {@link Integer#MAX_VALUE}.
-         * <b>Note</b><br>
-         * This is an integer as most implementations cannot do bodies greater than 2GB.
-         */
         Integer length();
 
-        /**
-         * True if {@link #asInputStream()} and {@link #asReader()} can be called more than once.
-         */
         boolean isRepeatable();
 
         InputStream asInputStream() throws IOException;

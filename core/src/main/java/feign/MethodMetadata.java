@@ -39,22 +39,14 @@ public final class MethodMetadata implements Serializable {
     private transient Type bodyType;
     private RequestTemplate template = new RequestTemplate();
     private List<String> formParams = new ArrayList<String>();
-    private Map<Integer, Collection<String>> indexToName =
-            new LinkedHashMap<Integer, Collection<String>>();
-    private Map<Integer, Class<? extends Expander>> indexToExpanderClass =
-            new LinkedHashMap<Integer, Class<? extends Expander>>();
+    private Map<Integer, Collection<String>> indexToName = new LinkedHashMap<Integer, Collection<String>>();
+    private Map<Integer, Class<? extends Expander>> indexToExpanderClass = new LinkedHashMap<Integer, Class<? extends Expander>>();
     private Map<Integer, Boolean> indexToEncoded = new LinkedHashMap<Integer, Boolean>();
     private transient Map<Integer, Expander> indexToExpander;
 
     MethodMetadata() {
     }
 
-    /**
-     * Used as a reference to this method. For example, {@link Logger#log(String, String, Object...)
-     * logging} or {@link ReflectiveFeign reflective dispatch}.
-     *
-     * @see Feign#configKey(Class, java.lang.reflect.Method)
-     */
     public String configKey() {
         return configKey;
     }
@@ -118,9 +110,6 @@ public final class MethodMetadata implements Serializable {
         return this;
     }
 
-    /**
-     * Type corresponding to {@link #bodyIndex()}.
-     */
     public Type bodyType() {
         return bodyType;
     }
@@ -146,17 +135,10 @@ public final class MethodMetadata implements Serializable {
         return indexToEncoded;
     }
 
-    /**
-     * If {@link #indexToExpander} is null, classes here will be instantiated by newInstance.
-     */
     public Map<Integer, Class<? extends Expander>> indexToExpanderClass() {
         return indexToExpanderClass;
     }
 
-    /**
-     * After {@link #indexToExpanderClass} is populated, this is set by contracts that support runtime
-     * injection.
-     */
     public MethodMetadata indexToExpander(Map<Integer, Expander> indexToExpander) {
         this.indexToExpander = indexToExpander;
         return this;
