@@ -1,11 +1,11 @@
 /**
  * Copyright 2012-2019 The Feign Authors
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -22,34 +22,36 @@ import com.netflix.loadbalancer.ILoadBalancer;
 
 public interface LBClientFactory {
 
-  LBClient create(String clientName);
+    LBClient create(String clientName);
 
-  /**
-   * Uses {@link ClientFactory} static factories from ribbon to create an LBClient.
-   */
-  public static final class Default implements LBClientFactory {
-    @Override
-    public LBClient create(String clientName) {
-      IClientConfig config =
-          ClientFactory.getNamedConfig(clientName, DisableAutoRetriesByDefaultClientConfig.class);
-      ILoadBalancer lb = ClientFactory.getNamedLoadBalancer(clientName);
-      return LBClient.create(lb, config);
-    }
-  }
-
-  IClientConfigKey<String> RetryableStatusCodes =
-      new CommonClientConfigKey<String>("RetryableStatusCodes") {};
-
-  final class DisableAutoRetriesByDefaultClientConfig extends DefaultClientConfigImpl {
-    @Override
-    public int getDefaultMaxAutoRetriesNextServer() {
-      return 0;
+    /**
+     * Uses {@link ClientFactory} static factories from ribbon to create an LBClient.
+     */
+    public static final class Default implements LBClientFactory {
+        @Override
+        public LBClient create(String clientName) {
+            //根据名字获取配置
+            IClientConfig config = ClientFactory.getNamedConfig(clientName, DisableAutoRetriesByDefaultClientConfig.class);
+            //获取到负载均衡器
+            ILoadBalancer lb = ClientFactory.getNamedLoadBalancer(clientName);
+            //根据配置创建一个client
+            return LBClient.create(lb, config);
+        }
     }
 
-    @Override
-    public void loadDefaultValues() {
-      super.loadDefaultValues();
-      putDefaultStringProperty(LBClientFactory.RetryableStatusCodes, "");
+    IClientConfigKey<String> RetryableStatusCodes = new CommonClientConfigKey<String>("RetryableStatusCodes") {
+    };
+
+    final class DisableAutoRetriesByDefaultClientConfig extends DefaultClientConfigImpl {
+        @Override
+        public int getDefaultMaxAutoRetriesNextServer() {
+            return 0;
+        }
+
+        @Override
+        public void loadDefaultValues() {
+            super.loadDefaultValues();
+            putDefaultStringProperty(LBClientFactory.RetryableStatusCodes, "");
+        }
     }
-  }
 }

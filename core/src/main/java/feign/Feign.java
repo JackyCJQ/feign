@@ -51,6 +51,7 @@ public abstract class Feign {
         builder.append('#').append(method.getName()).append('(');
         //解析每个方法中的参数
         for (Type param : method.getGenericParameterTypes()) {
+            //解析参数的类型
             param = Types.resolve(targetType, targetType, param);
             builder.append(Types.getRawType(param).getSimpleName()).append(',');
         }
@@ -76,18 +77,21 @@ public abstract class Feign {
         private Retryer retryer = new Retryer.Default();
         //默认是没有日志
         private Logger logger = new NoOpLogger();
+        //编码器
         private Encoder encoder = new Encoder.Default();
+        //解码器
         private Decoder decoder = new Decoder.Default();
-        //
+        //默认是解析bean类型的参数
         private QueryMapEncoder queryMapEncoder = new QueryMapEncoder.Default();
         //默认的错误解码器
         private ErrorDecoder errorDecoder = new ErrorDecoder.Default();
         //可选择
         private Options options = new Options();
         //反射工厂
-        private InvocationHandlerFactory invocationHandlerFactory =
-                new InvocationHandlerFactory.Default();
+        private InvocationHandlerFactory invocationHandlerFactory = new InvocationHandlerFactory.Default();
+        //是否解析404
         private boolean decode404;
+        //默认在decode之后关闭链接
         private boolean closeAfterDecode = true;
         //异常传递策略
         private ExceptionPropagationPolicy propagationPolicy = NONE;

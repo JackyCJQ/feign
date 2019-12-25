@@ -50,6 +50,7 @@ public final class OptionalDecoder implements Decoder {
             return false;
         }
         ParameterizedType parameterizedType = (ParameterizedType) type;
+        //解决Optional类
         return parameterizedType.getRawType().equals(Optional.class);
     }
 }

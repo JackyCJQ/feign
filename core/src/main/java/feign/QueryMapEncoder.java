@@ -20,21 +20,20 @@ import java.util.Map;
 
 /**
  * A QueryMapEncoder encodes Objects into maps of query parameter names to values.
- *
- *
  */
 public interface QueryMapEncoder {
 
     /**
+     * 把一个请求对象转化为map
      * Encodes the given object into a query map.
      */
     Map<String, Object> encode(Object object);
 
     /**
      * @deprecated use {@link BeanQueryMapEncoder} instead. default encoder uses reflection to inspect
-     *             provided objects Fields to expand the objects values into a query string. If you
-     *             prefer that the query string be built using getter and setter methods, as defined
-     *             in the Java Beans API, please use the {@link BeanQueryMapEncoder}
+     * provided objects Fields to expand the objects values into a query string. If you
+     * prefer that the query string be built using getter and setter methods, as defined
+     * in the Java Beans API, please use the {@link BeanQueryMapEncoder}
      */
     class Default extends FieldQueryMapEncoder {
     }

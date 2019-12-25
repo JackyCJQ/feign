@@ -80,8 +80,10 @@ final class SynchronousMethodHandler implements MethodHandler {
         this.propagationPolicy = propagationPolicy;
     }
 
+    //实际执行的入口
     @Override
     public Object invoke(Object[] argv) throws Throwable {
+        //根据参数生成请求的模板
         RequestTemplate template = buildTemplateFromArgs.create(argv);
         Retryer retryer = this.retryer.clone();
         while (true) {
@@ -89,7 +91,7 @@ final class SynchronousMethodHandler implements MethodHandler {
                 return executeAndDecode(template);
             } catch (RetryableException e) {
                 try {
-                    //如果出现了异常
+                    //交由错误处理器来处理
                     retryer.continueOrPropagate(e);
                 } catch (RetryableException th) {
                     Throwable cause = th.getCause();
@@ -108,7 +110,14 @@ final class SynchronousMethodHandler implements MethodHandler {
         }
     }
 
+    /**
+     * 直接执行入口方法
+     * @param template
+     * @return
+     * @throws Throwable
+     */
     Object executeAndDecode(RequestTemplate template) throws Throwable {
+        //走拦截器
         Request request = targetRequest(template);
 
         if (logLevel != Logger.Level.NONE) {
@@ -177,6 +186,12 @@ final class SynchronousMethodHandler implements MethodHandler {
         return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
     }
 
+
+    /**
+     * 调用拦截器添加额外请求信息
+     * @param template
+     * @return
+     */
     Request targetRequest(RequestTemplate template) {
         for (RequestInterceptor interceptor : requestInterceptors) {
             interceptor.apply(template);

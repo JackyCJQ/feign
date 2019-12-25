@@ -33,7 +33,9 @@ public class FieldQueryMapEncoder implements QueryMapEncoder {
     //缓存所有的参数类
     private final Map<Class<?>, ObjectParamMetadata> classToMetadata = new HashMap<Class<?>, ObjectParamMetadata>();
 
-    //获取对象中的属性和值
+    /**
+     * 获取对象中的属性和值
+     */
     @Override
     public Map<String, Object> encode(Object object) throws EncodeException {
         try {
@@ -63,6 +65,7 @@ public class FieldQueryMapEncoder implements QueryMapEncoder {
         return metadata;
     }
 
+    //存放了Object的字段信息
     private static class ObjectParamMetadata {
 
         private final List<Field> objectFields;

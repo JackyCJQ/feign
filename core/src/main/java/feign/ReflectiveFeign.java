@@ -128,6 +128,9 @@ public class ReflectiveFeign extends Feign {
         }
     }
 
+    /**
+     * 解析接口中的方法
+     */
     static final class ParseHandlersByName {
 
         private final Contract contract;
@@ -157,7 +160,7 @@ public class ReflectiveFeign extends Feign {
 
         //传递一个定义的接口
         public Map<String, MethodHandler> apply(Target key) {
-            //利用解携解析接口上注解
+            //解析接口上注解
             List<MethodMetadata> metadata = contract.parseAndValidatateMetadata(key.type());
             //方法与其对应的方法处理器
             Map<String, MethodHandler> result = new LinkedHashMap<String, MethodHandler>();
@@ -179,6 +182,10 @@ public class ReflectiveFeign extends Feign {
         }
     }
 
+
+    /**
+     * 实现请求模板的工厂类
+     */
     private static class BuildTemplateByResolvingArgs implements RequestTemplate.Factory {
 
         private final QueryMapEncoder queryMapEncoder;
@@ -331,11 +338,15 @@ public class ReflectiveFeign extends Feign {
         }
     }
 
+    /**
+     *
+     */
     private static class BuildFormEncodedTemplateFromArgs extends BuildTemplateByResolvingArgs {
 
         private final Encoder encoder;
 
-        private BuildFormEncodedTemplateFromArgs(MethodMetadata metadata, Encoder encoder,
+        private BuildFormEncodedTemplateFromArgs(MethodMetadata metadata,
+                                                 Encoder encoder,
                                                  QueryMapEncoder queryMapEncoder) {
             super(metadata, queryMapEncoder);
             this.encoder = encoder;

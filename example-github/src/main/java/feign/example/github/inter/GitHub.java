@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @Headers({"name:aa", "name:bb", "age:12"})
 public interface GitHub {
     @RequestLine(value = "GET /users/{username}/repos?sort=full_name")
+    @Headers(value = "")
+    @Body("")
     List<Repository> repos(@Param("username") String owner);
 
     @RequestLine("GET /repos/{owner}/{repo}/contributors")

@@ -30,7 +30,6 @@ import static feign.Util.emptyToNull;
 
 /**
  * 注解解析器
- * Defines what annotations and values are valid on interfaces.
  */
 public interface Contract {
 
@@ -55,18 +54,19 @@ public interface Contract {
                 checkState(targetType.getInterfaces()[0].getInterfaces().length == 0,
                         "Only single-level inheritance supported: %s", targetType.getSimpleName());
             }
+            //解析接口中的方法，生成的数据
             Map<String, MethodMetadata> result = new LinkedHashMap<String, MethodMetadata>();
-
+            //遍历接口中的方法
             for (Method method : targetType.getMethods()) {
-                //如果是Object中的方法，
+                //如果是Object中的方法，或者是static方法或者是默认方法
                 if (method.getDeclaringClass() == Object.class || (method.getModifiers() & Modifier.STATIC) != 0 || Util.isDefault(method)) {
                     continue;
                 }
                 //解析方法获取元数据
                 MethodMetadata metadata = parseAndValidateMetadata(targetType, method);
                 //并且重写的方法还不支持
-                checkState(!result.containsKey(metadata.configKey()), "Overrides unsupported: %s",
-                        metadata.configKey());
+                checkState(!result.containsKey(metadata.configKey()), "Overrides unsupported: %s", metadata.configKey());
+                //添加紧缓存
                 result.put(metadata.configKey(), metadata);
             }
             return new ArrayList<>(result.values());
@@ -78,15 +78,16 @@ public interface Contract {
          */
         protected MethodMetadata parseAndValidateMetadata(Class<?> targetType, Method method) {
             MethodMetadata data = new MethodMetadata();
-            //返回的类型
+            //方法的返回类型
             data.returnType(Types.resolve(targetType, targetType, method.getGenericReturnType()));
+            //每个方法生成一个hash值
             data.configKey(Feign.configKey(targetType, method));
 
             if (targetType.getInterfaces().length == 1) {
                 //解析接口上的注解
                 processAnnotationOnClass(data, targetType.getInterfaces()[0]);
             }
-            //解析当前类上的注解
+            //解析当前接口上的注解，通用到每一个接口
             processAnnotationOnClass(data, targetType);
 
             //解析方法上的注解
@@ -99,7 +100,7 @@ public interface Contract {
             //获取方法上的信息
             Class<?>[] parameterTypes = method.getParameterTypes();
             Type[] genericParameterTypes = method.getGenericParameterTypes();
-
+            //获取方法中你的参数注解
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             int count = parameterAnnotations.length;
             for (int i = 0; i < count; i++) {
@@ -186,6 +187,9 @@ public interface Contract {
         }
     }
 
+    /**
+     * 解析feign注解默认的实现
+     */
     class Default extends BaseContract {
 
         static final Pattern REQUEST_LINE_PATTERN = Pattern.compile("^([A-Z]+)[ ]*(.*)$");
@@ -199,6 +203,7 @@ public interface Contract {
                 checkState(headersOnType.length > 0, "Headers annotation was empty on type %s.",
                         targetType.getName());
                 Map<String, Collection<String>> headers = toMap(headersOnType);
+                //这里好像没有意义
                 headers.putAll(data.template().headers());
                 //先清空在设置
                 data.template().headers(null);
@@ -225,9 +230,11 @@ public interface Contract {
                             "RequestLine annotation didn't start with an HTTP verb on method %s",
                             method.getName()));
                 } else {
+                    //添加请求的方法和请求的方式
                     data.template().method(HttpMethod.valueOf(requestLineMatcher.group(1)));
                     data.template().uri(requestLineMatcher.group(2));
                 }
+                //添加另外两个属性
                 data.template().decodeSlash(RequestLine.class.cast(methodAnnotation).decodeSlash());
                 data.template().collectionFormat(RequestLine.class.cast(methodAnnotation).collectionFormat());
 
@@ -238,9 +245,11 @@ public interface Contract {
                 if (body.indexOf('{') == -1) {
                     data.template().body(body);
                 } else {
+                    //带不带有什么区别吗？
                     data.template().bodyTemplate(body);
                 }
             } else if (annotationType == Headers.class) {
+                //还可以在添加header信息
                 String[] headersOnMethod = Headers.class.cast(methodAnnotation).value();
                 checkState(headersOnMethod.length > 0, "Headers annotation was empty on method %s.",
                         method.getName());
@@ -286,8 +295,15 @@ public interface Contract {
             return isHttpAnnotation;
         }
 
+        /**
+         * 解析同名的header
+         *
+         * @param input
+         * @return
+         */
         private static Map<String, Collection<String>> toMap(String[] input) {
             Map<String, Collection<String>> result = new LinkedHashMap<String, Collection<String>>(input.length);
+            //header已:分隔key和value
             for (String header : input) {
                 int colon = header.indexOf(':');
                 String name = header.substring(0, colon);

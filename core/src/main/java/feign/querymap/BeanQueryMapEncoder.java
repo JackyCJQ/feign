@@ -32,9 +32,12 @@ import java.util.*;
  * left out
  */
 public class BeanQueryMapEncoder implements QueryMapEncoder {
+    //本地缓存
     private final Map<Class<?>, ObjectParamMetadata> classToMetadata = new HashMap<Class<?>, ObjectParamMetadata>();
 
-    //同样生成一个map
+    /**
+     * 样生成一个map
+     */
     @Override
     public Map<String, Object> encode(Object object) throws EncodeException {
         try {
@@ -69,8 +72,7 @@ public class BeanQueryMapEncoder implements QueryMapEncoder {
             this.objectProperties = Collections.unmodifiableList(objectProperties);
         }
 
-        private static ObjectParamMetadata parseObjectType(Class<?> type)
-                throws IntrospectionException {
+        private static ObjectParamMetadata parseObjectType(Class<?> type) throws IntrospectionException {
             List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>();
             //通过get方法获取属性的值，通过java的内省方式，简单获取set和get
             for (PropertyDescriptor pd : Introspector.getBeanInfo(type).getPropertyDescriptors()) {

@@ -22,7 +22,7 @@ import static feign.Util.ISO_8859_1;
 import static feign.Util.checkNotNull;
 
 /**
- * 在请求头中添加基本的验证信息
+ * 在请求头中添加基本的验证信息,如果在请求头中添加信息，可以参考这个方法
  */
 public class BasicAuthRequestInterceptor implements RequestInterceptor {
 
