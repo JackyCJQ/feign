@@ -30,6 +30,7 @@ public final class Response implements Closeable {
     private final Body body;//返回头
     private final Request request; //请求
 
+    //通过builder方式进行创建
     private Response(Builder builder) {
         //保留请求
         checkState(builder.request != null, "original request is required");
@@ -48,7 +49,7 @@ public final class Response implements Closeable {
     public static Builder builder() {
         return new Builder();
     }
-
+    //构建response内容
     public static final class Builder {
         int status;//返回的状态码
         String reason; //

@@ -33,7 +33,7 @@ public class FeignException extends RuntimeException {
         this.status = status;
     }
 
-    //
+    //多添加了一个错误的内容
     protected FeignException(int status, String message, Throwable cause, byte[] content) {
         super(message, cause);
         this.status = status;
@@ -59,7 +59,6 @@ public class FeignException extends RuntimeException {
         return this.content;
     }
 
-    //这里又是用的utf-8编码转化的
     public String contentUTF8() {
         if (content != null) {
             return new String(content, UTF_8);
@@ -92,7 +91,7 @@ public class FeignException extends RuntimeException {
         return errorStatus(response.status(), message, body);
     }
 
-    //细分了错误的类型
+    //细分了服务端的错误
     private static FeignException errorStatus(int status, String message, byte[] body) {
         switch (status) {
             case 400:
@@ -140,7 +139,7 @@ public class FeignException extends RuntimeException {
                 cause,
                 null);
     }
-
+  //以下定义了 具体的服务端错误的类型
     public static class BadRequest extends FeignException {
         public BadRequest(String message, byte[] body) {
             super(400, message, body);

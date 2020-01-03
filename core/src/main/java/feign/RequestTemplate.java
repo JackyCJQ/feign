@@ -863,7 +863,7 @@ public final class RequestTemplate implements Serializable {
     }
 
     /**
-     * Factory for creating RequestTemplate.
+     * RequestTemplate 工厂类
      */
     interface Factory {
 

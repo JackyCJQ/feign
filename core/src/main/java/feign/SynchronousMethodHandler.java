@@ -112,6 +112,7 @@ final class SynchronousMethodHandler implements MethodHandler {
 
     /**
      * 直接执行入口方法
+     *
      * @param template
      * @return
      * @throws Throwable
@@ -127,6 +128,7 @@ final class SynchronousMethodHandler implements MethodHandler {
         Response response;
         long start = System.nanoTime();
         try {
+            //交由具体的 http客户端去执行
             response = client.execute(request, options);
         } catch (IOException e) {
             if (logLevel != Logger.Level.NONE) {
@@ -189,6 +191,7 @@ final class SynchronousMethodHandler implements MethodHandler {
 
     /**
      * 调用拦截器添加额外请求信息
+     *
      * @param template
      * @return
      */
@@ -202,7 +205,7 @@ final class SynchronousMethodHandler implements MethodHandler {
     //解码response
     Object decode(Response response) throws Throwable {
         try {
-            //方法的返回类型
+            //利用解析器去解析结果
             return decoder.decode(response, metadata.returnType());
         } catch (FeignException e) {
             throw e;
@@ -211,7 +214,9 @@ final class SynchronousMethodHandler implements MethodHandler {
         }
     }
 
-    //工厂模式
+    /**
+     * methodHandler处理器
+     */
     static class Factory {
 
         private final Client client;
@@ -247,6 +252,7 @@ final class SynchronousMethodHandler implements MethodHandler {
                                     Options options,
                                     Decoder decoder,
                                     ErrorDecoder errorDecoder) {
+            //除了公共的配置  还有一些针对每个方法的单独配置
             return new SynchronousMethodHandler(target, client, retryer, requestInterceptors, logger,
                     logLevel, md, buildTemplateFromArgs, options, decoder,
                     errorDecoder, decode404, closeAfterDecode, propagationPolicy);

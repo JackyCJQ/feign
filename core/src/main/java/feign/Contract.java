@@ -66,7 +66,7 @@ public interface Contract {
                 MethodMetadata metadata = parseAndValidateMetadata(targetType, method);
                 //并且重写的方法还不支持
                 checkState(!result.containsKey(metadata.configKey()), "Overrides unsupported: %s", metadata.configKey());
-                //添加紧缓存
+                //添加紧缓存】
                 result.put(metadata.configKey(), metadata);
             }
             return new ArrayList<>(result.values());

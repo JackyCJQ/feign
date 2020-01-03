@@ -79,7 +79,9 @@ public class ReflectiveFeign extends Feign {
         return proxy;
     }
 
-    //创建的默认代理类实现
+    /**
+     * 默认的实现
+     */
     static class FeignInvocationHandler implements InvocationHandler {
 
         private final Target target;
@@ -104,7 +106,7 @@ public class ReflectiveFeign extends Feign {
             } else if ("toString".equals(method.getName())) {
                 return toString();
             }
-
+           //调用实际的处理方法
             return dispatch.get(method).invoke(args);
         }
 
@@ -193,6 +195,7 @@ public class ReflectiveFeign extends Feign {
         protected final MethodMetadata metadata;
         private final Map<Integer, Expander> indexToExpander = new LinkedHashMap<Integer, Expander>();
 
+        //方法的元数据+请求的参数
         private BuildTemplateByResolvingArgs(MethodMetadata metadata, QueryMapEncoder queryMapEncoder) {
             this.metadata = metadata;
             this.queryMapEncoder = queryMapEncoder;
