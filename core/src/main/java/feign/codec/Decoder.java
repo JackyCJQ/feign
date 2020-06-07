@@ -22,7 +22,7 @@ import java.lang.reflect.Type;
 
 /**
  * Decodes an HTTP response into a single object of the given type. Invoked when
- * Response.status() is in the 2xx range and the return type is neither  void nor
+ * Response.status() is in the 2xx range and the return type is neither void nor
  * Response.
  */
 public interface Decoder {
@@ -33,24 +33,18 @@ public interface Decoder {
      */
     Object decode(Response response, Type type) throws IOException, DecodeException, FeignException;
 
-    /**
-     * Default implementation of {@code Decoder}.
-     */
     public class Default extends StringDecoder {
 
         @Override
         public Object decode(Response response, Type type) throws IOException {
-            //如果是返回404或204则返回null
+            //判断返回的结果
             if (response.status() == 404 || response.status() == 204)
                 return Util.emptyValueOf(type);
-            //如果没有返回则也是null
             if (response.body() == null)
                 return null;
-            //如果是字节数组，则返回字节数组
             if (byte[].class.equals(type)) {
                 return Util.toByteArray(response.body().asInputStream());
             }
-            //转化为String类型
             return super.decode(response, type);
         }
     }

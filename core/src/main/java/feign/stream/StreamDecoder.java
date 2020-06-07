@@ -56,7 +56,7 @@ public final class StreamDecoder implements Decoder {
 
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
-        //如果类型不是ParameterizedType的类型
+        //仅仅支持集合类型
         if (!(type instanceof ParameterizedType)) {
             throw new IllegalArgumentException("StreamDecoder supports only stream: unknown " + type);
         }

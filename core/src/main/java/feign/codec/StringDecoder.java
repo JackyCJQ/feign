@@ -21,12 +21,12 @@ import java.lang.reflect.Type;
 
 import static java.lang.String.format;
 
-//默认解析为字符串
 public class StringDecoder implements Decoder {
 
     @Override
     public Object decode(Response response, Type type) throws IOException {
         Response.Body body = response.body();
+        //如果没有返回体
         if (body == null) {
             return null;
         }

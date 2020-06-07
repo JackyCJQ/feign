@@ -43,19 +43,20 @@ public final class RequestTemplate implements Serializable {
     private static final Pattern QUERY_STRING_PATTERN = Pattern.compile("(?<!\\{)\\?");
     //请求体
     private final Map<String, QueryTemplate> queries = new LinkedHashMap<>();
-    //请求头
+    //请求头 根据字母自然排序
     private final Map<String, HeaderTemplate> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     //访问的url地址
     private String target;
     //解析的URL碎片
     private String fragment;
     private boolean resolved = false;
-
+    //uri模板
     private UriTemplate uriTemplate;
     private HttpMethod method;
     private transient Charset charset = Util.UTF_8;
     //请求体
     private Request.Body body = Request.Body.empty();
+    //？
     private boolean decodeSlash = true;
     //默认没有分隔符
     private CollectionFormat collectionFormat = CollectionFormat.EXPLODED;
@@ -87,11 +88,12 @@ public final class RequestTemplate implements Serializable {
                 new RequestTemplate(requestTemplate.target,
                         requestTemplate.fragment,
                         requestTemplate.uriTemplate,
-                        requestTemplate.method, requestTemplate.charset,
+                        requestTemplate.method,
+                        requestTemplate.charset,
                         requestTemplate.body,
                         requestTemplate.decodeSlash,
                         requestTemplate.collectionFormat);
-
+        //复制所有的属性和header
         if (!requestTemplate.queries().isEmpty()) {
             template.queries.putAll(requestTemplate.queries);
         }

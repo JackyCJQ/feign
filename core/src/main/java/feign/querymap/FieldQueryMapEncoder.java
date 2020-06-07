@@ -44,7 +44,7 @@ public class FieldQueryMapEncoder implements QueryMapEncoder {
             Map<String, Object> fieldNameToValue = new HashMap<String, Object>();
             //获取这个对象中的所有字段
             for (Field field : metadata.objectFields) {
-                //获取属性值
+                //通过反射的方式获取属性值
                 Object value = field.get(object);
                 if (value != null && value != object) {
                     fieldNameToValue.put(field.getName(), value);

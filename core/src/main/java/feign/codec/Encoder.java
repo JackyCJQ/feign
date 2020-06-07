@@ -83,14 +83,12 @@ public interface Encoder {
 
         @Override
         public void encode(Object object, Type bodyType, RequestTemplate template) {
-            //直接调用的toString方法
             if (bodyType == String.class) {
                 template.body(object.toString());
             } else if (bodyType == byte[].class) {
                 template.body((byte[]) object, null);
             } else if (object != null) {
-                throw new EncodeException(
-                        format("%s is not a type supported by this encoder.", object.getClass()));
+                throw new EncodeException(format("%s is not a type supported by this encoder.", object.getClass()));
             }
         }
     }

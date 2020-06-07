@@ -15,7 +15,9 @@ package feign.auth;
 
 import java.io.UnsupportedEncodingException;
 
-//base64加密
+/**
+ * base64加密
+ */
 final class Base64 {
 
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];

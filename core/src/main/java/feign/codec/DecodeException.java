@@ -16,17 +16,13 @@ package feign.codec;
 import feign.FeignException;
 import static feign.Util.checkNotNull;
 
-/**
- * Similar to {@code javax.websocket.DecodeException}, raised when a problem occurs decoding a
- * message. Note that {@code DecodeException} is not an {@code IOException}, nor does it have one
- * set as its cause.
- */
+
 public class DecodeException extends FeignException {
 
   private static final long serialVersionUID = 1L;
 
   /**
-   * @param message the reason for the failure.
+   * 状态码和消息
    */
   public DecodeException(int status, String message) {
 

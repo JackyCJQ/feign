@@ -59,7 +59,7 @@ public class Template {
      * @param value           of the template.
      * @param allowUnresolved if unresolved expressions should remain.
      * @param encode          all values.
-     * @param encodeSlash     if slash characters should be encoded.
+     * @param encodeSlash     if slash characters should be encoded. slash 斜杠
      */
     Template(String value, ExpansionOptions allowUnresolved, EncodingOptions encode, boolean encodeSlash, Charset charset) {
         if (value == null) {
@@ -218,6 +218,7 @@ public class Template {
      * @param query    if the fragment is part of a query string.
      */
     private void parseFragment(String fragment, boolean query) {
+        //切分{}
         ChunkTokenizer tokenizer = new ChunkTokenizer(fragment);
 
         while (tokenizer.hasNext()) {

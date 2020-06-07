@@ -41,6 +41,7 @@ public final class OptionalDecoder implements Decoder {
             return Optional.empty();
         }
         Type enclosedType = Util.resolveLastTypeParameter(type, Optional.class);
+        //转化为一个optional类
         return Optional.ofNullable(delegate.decode(response, enclosedType));
     }
 
@@ -50,7 +51,7 @@ public final class OptionalDecoder implements Decoder {
             return false;
         }
         ParameterizedType parameterizedType = (ParameterizedType) type;
-        //解决Optional类
+        //如果参数化类型为Optional类
         return parameterizedType.getRawType().equals(Optional.class);
     }
 }

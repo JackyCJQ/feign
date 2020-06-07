@@ -25,7 +25,6 @@ public interface QueryMapEncoder {
 
     /**
      * 把一个请求对象转化为map
-     * Encodes the given object into a query map.
      */
     Map<String, Object> encode(Object object);
 

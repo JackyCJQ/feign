@@ -26,6 +26,7 @@ public final class BodyTemplate extends Template {
 
     private static final String JSON_TOKEN_START = "{";
     private static final String JSON_TOKEN_END = "}";
+    //上面两个字符的转义
     private static final String JSON_TOKEN_START_ENCODED = "%7B";
     private static final String JSON_TOKEN_END_ENCODED = "%7D";
     private boolean json = false;

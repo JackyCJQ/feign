@@ -1,6 +1,9 @@
 package feign.example.github.inter;
 
-import feign.*;
+import feign.Feign;
+import feign.Logger;
+import feign.Param;
+import feign.RequestLine;
 import feign.codec.Decoder;
 import feign.example.github.decoder.GitHubErrorDecoder;
 import feign.example.github.model.Contributor;
@@ -13,11 +16,11 @@ import java.util.stream.Collectors;
 /**
  * @auther
  */
-@Headers({"name:aa", "name:bb", "age:12"})
+//@Headers({"name:aa", "name:bb", "age:12"})
 public interface GitHub {
     @RequestLine(value = "GET /users/{username}/repos?sort=full_name")
-    @Headers(value = "")
-    @Body("")
+//    @Headers(value = "")
+//    @Body("")
     List<Repository> repos(@Param("username") String owner);
 
     @RequestLine("GET /repos/{owner}/{repo}/contributors")

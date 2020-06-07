@@ -41,7 +41,7 @@ public abstract class Feign {
     }
 
     /**
-     * 为类中的方法生成一个唯一的key
+     * 为接口中的方法生成一个唯一的key
      *
      * @see MethodMetadata#configKey()
      */
@@ -62,6 +62,7 @@ public abstract class Feign {
         return builder.append(')').toString();
     }
 
+    //代理实现 创建一个实例
     public abstract <T> T newInstance(Target<T> target);
 
     public static class Builder {
@@ -162,7 +163,7 @@ public abstract class Feign {
             return this;
         }
 
-        //错误解码器
+        //其他选项
         public Builder options(Options options) {
             this.options = options;
             return this;

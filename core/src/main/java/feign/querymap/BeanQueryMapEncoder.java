@@ -42,6 +42,7 @@ public class BeanQueryMapEncoder implements QueryMapEncoder {
     public Map<String, Object> encode(Object object) throws EncodeException {
         try {
             ObjectParamMetadata metadata = getMetadata(object.getClass());
+            //解析属性的key和value
             Map<String, Object> propertyNameToValue = new HashMap<String, Object>();
             for (PropertyDescriptor pd : metadata.objectProperties) {
                 Object value = pd.getReadMethod().invoke(object);
@@ -55,6 +56,13 @@ public class BeanQueryMapEncoder implements QueryMapEncoder {
         }
     }
 
+    /**
+     * 解析生成到本地缓存中
+     *
+     * @param objectType
+     * @return
+     * @throws IntrospectionException
+     */
     private ObjectParamMetadata getMetadata(Class<?> objectType) throws IntrospectionException {
         ObjectParamMetadata metadata = classToMetadata.get(objectType);
         if (metadata == null) {
@@ -82,7 +90,6 @@ public class BeanQueryMapEncoder implements QueryMapEncoder {
                     properties.add(pd);
                 }
             }
-
             return new ObjectParamMetadata(properties);
         }
     }

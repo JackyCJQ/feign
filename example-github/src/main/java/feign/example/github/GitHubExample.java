@@ -28,12 +28,12 @@ public class GitHubExample {
         for (String contributor : contributors) {
             System.out.println(contributor);
         }
-        System.out.println("Now, let's cause an error.");
-        try {
-            github.contributors("openfeign", "some-unknown-project");
-        } catch (GitHubClientError e) {
-            System.out.println(e.getMessage());
-        }
+//        System.out.println("Now, let's cause an error.");
+//        try {
+//            github.contributors("openfeign", "some-unknown-project");
+//        } catch (GitHubClientError e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
 }

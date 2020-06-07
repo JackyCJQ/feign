@@ -60,6 +60,7 @@ public class FeignException extends RuntimeException {
     }
 
     public String contentUTF8() {
+        //字节转化为字符串
         if (content != null) {
             return new String(content, UTF_8);
         } else {

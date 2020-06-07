@@ -37,15 +37,14 @@ public class BasicAuthRequestInterceptor implements RequestInterceptor {
     public BasicAuthRequestInterceptor(String username, String password, Charset charset) {
         checkNotNull(username, "username");
         checkNotNull(password, "password");
+        //不同的编码，数组长度不一样  一般是区分在汉字编码上
         this.headerValue = "Basic " + base64Encode((username + ":" + password).getBytes(charset));
     }
 
-    //出于安全性要求，进行了base64加密
     private static String base64Encode(byte[] bytes) {
         return Base64.encode(bytes);
     }
 
-    //请求头中添加认证信息
     @Override
     public void apply(RequestTemplate template) {
         template.header("Authorization", headerValue);

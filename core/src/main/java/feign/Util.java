@@ -193,10 +193,10 @@ public class Util {
      * retrofit.RestMethodInfo}.
      *
      * @param genericContext Ex. {@link java.lang.reflect.Field#getGenericType()}
-     * @param supertype Ex. {@code Decoder.class}
+     * @param supertype      Ex. {@code Decoder.class}
      * @return in the example above, the type parameter of {@code Decoder}.
      * @throws IllegalStateException if {@code supertype} cannot be resolved into a parameterized type
-     *         using {@code context}.
+     *                               using {@code context}.
      */
     public static Type resolveLastTypeParameter(Type genericContext, Class<?> supertype)
             throws IllegalStateException {
@@ -228,7 +228,7 @@ public class Util {
      * <li>{@code Map}</li>
      * <li>{@code Set}</li>
      * </ul>
-     *
+     * <p>
      * <p/>
      * When {@link Feign.Builder#decode404() decoding HTTP 404 status}, you'll need to teach decoders
      * a default empty value for a type. This method cheaply supports typical types by only looking at
@@ -241,6 +241,7 @@ public class Util {
 
     private static final Map<Class<?>, Supplier<Object>> EMPTIES;
 
+    //对于返回结果的默认处理,如果是其他类型的则默认返回NUll
     static {
         final Map<Class<?>, Supplier<Object>> empties = new LinkedHashMap<Class<?>, Supplier<Object>>();
         empties.put(boolean.class, () -> false);
@@ -257,6 +258,7 @@ public class Util {
     }
 
     /**
+     * 把一个流解析为字符串
      * Adapted from {@code com.google.common.io.CharStreams.toString()}.
      */
     public static String toString(Reader reader) throws IOException {

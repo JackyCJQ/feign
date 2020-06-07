@@ -21,6 +21,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 解析表达式
+ */
 public final class Expressions {
     private static Map<Pattern, Class<? extends Expression>> expressions;
 
