@@ -20,21 +20,27 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * 方法的元数据类，就是一个记录的model,没有实际的逻辑处理
+ * 方法的元数据类
  */
 public final class MethodMetadata implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String configKey; //每个方法生成一个唯一的字符串
-    private transient Type returnType;//transient 该关键字修饰的变量不会被序列化
+    //每个方法生成一个唯一的字符串
+    private String configKey;
+    //transient 该关键字修饰的变量不会被序列化
+    private transient Type returnType;
+    //记录索引开始的位置
     private Integer urlIndex;
     private Integer bodyIndex;
     private Integer headerMapIndex;
     private Integer queryMapIndex;
+    //请求体
     private boolean queryMapEncoded;
     private transient Type bodyType;//
-    private RequestTemplate template = new RequestTemplate();//请求模板
-    private List<String> formParams = new ArrayList<String>();//参数
+    //请求模板
+    private RequestTemplate template = new RequestTemplate();
+    //参数
+    private List<String> formParams = new ArrayList<String>();
     private Map<Integer, Collection<String>> indexToName = new LinkedHashMap<Integer, Collection<String>>();
     private Map<Integer, Class<? extends Expander>> indexToExpanderClass = new LinkedHashMap<Integer, Class<? extends Expander>>();
     private Map<Integer, Boolean> indexToEncoded = new LinkedHashMap<Integer, Boolean>();

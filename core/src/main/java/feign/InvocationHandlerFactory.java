@@ -24,13 +24,15 @@ public interface InvocationHandlerFactory {
 
     /**
      * 根据请求的方法获取对应的处理器
-     * @param target
-     * @param dispatch
+     *
+     * @param target   请求的目标信息
+     * @param dispatch 接口中所有的方法
      * @return
      */
     InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch);
 
     /**
+     * 方法处理器
      * Like {@link InvocationHandler#invoke(Object, java.lang.reflect.Method, Object[])}, except for a
      * single method.
      */

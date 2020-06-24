@@ -47,7 +47,6 @@ public class Template {
     private final String template;
     //是否允许存在未被解析的模板
     private final boolean allowUnresolved;
-    //编码的选择
     private final EncodingOptions encode;
     private final boolean encodeSlash;
     private final Charset charset;

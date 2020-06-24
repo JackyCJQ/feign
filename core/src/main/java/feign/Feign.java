@@ -35,13 +35,14 @@ import static feign.ExceptionPropagationPolicy.NONE;
  * targeted} http apis.
  */
 public abstract class Feign {
-    //builder方式进行构建
+
     public static Builder builder() {
         return new Builder();
     }
 
     /**
      * 为接口中的方法生成一个唯一的key
+     * GitHub#repos(String)
      *
      * @see MethodMetadata#configKey()
      */
@@ -65,6 +66,9 @@ public abstract class Feign {
     //代理实现 创建一个实例
     public abstract <T> T newInstance(Target<T> target);
 
+    /**
+     * 每一个feign实例
+     */
     public static class Builder {
         //过滤器集合
         private final List<RequestInterceptor> requestInterceptors = new ArrayList<RequestInterceptor>();
@@ -86,7 +90,7 @@ public abstract class Feign {
         private QueryMapEncoder queryMapEncoder = new QueryMapEncoder.Default();
         //默认的错误解码器
         private ErrorDecoder errorDecoder = new ErrorDecoder.Default();
-        //可选择
+        //链接选项
         private Options options = new Options();
         //反射工厂
         private InvocationHandlerFactory invocationHandlerFactory = new InvocationHandlerFactory.Default();
@@ -176,7 +180,7 @@ public abstract class Feign {
         }
 
         /**
-         * 会清空之前的拦截器
+         * 批量添加
          */
         public Builder requestInterceptors(Iterable<RequestInterceptor> requestInterceptors) {
             this.requestInterceptors.clear();
@@ -187,7 +191,6 @@ public abstract class Feign {
         }
 
         /**
-         * 可以自己写反射
          * Allows you to override how reflective dispatch works inside of Feign.
          */
         public Builder invocationHandlerFactory(InvocationHandlerFactory invocationHandlerFactory) {
@@ -195,7 +198,9 @@ public abstract class Feign {
             return this;
         }
 
-        //在获取到结果之后是否要关闭连接
+        /**
+         * 在获取到结果之后是否要关闭连接
+         */
         public Builder doNotCloseAfterDecode() {
             this.closeAfterDecode = false;
             return this;
@@ -207,19 +212,33 @@ public abstract class Feign {
             return this;
         }
 
-        //目标接口，硬编码的url
+        /**
+         * 目标接口，硬编码的url
+         *
+         * @param apiType
+         * @param url
+         * @param <T>
+         * @return
+         */
         public <T> T target(Class<T> apiType, String url) {
             return target(new HardCodedTarget<T>(apiType, url));
         }
 
         //目标接口
         public <T> T target(Target<T> target) {
+
             return build().newInstance(target);
         }
 
+        /**
+         * 生成一个实例
+         *
+         * @return
+         */
         public Feign build() {
             SynchronousMethodHandler.Factory synchronousMethodHandlerFactory =
                     new SynchronousMethodHandler.Factory(client, retryer, requestInterceptors, logger, logLevel, decode404, closeAfterDecode, propagationPolicy);
+            //根据名字进行解析
             ParseHandlersByName handlersByName =
                     new ParseHandlersByName(contract, options, encoder, decoder, queryMapEncoder, errorDecoder, synchronousMethodHandlerFactory);
             return new ReflectiveFeign(handlersByName, invocationHandlerFactory, queryMapEncoder);

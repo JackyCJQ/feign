@@ -29,7 +29,9 @@ import static feign.FeignException.errorReading;
 import static feign.Util.checkNotNull;
 import static feign.Util.ensureClosed;
 
-//同步方法处理器
+/**
+ * 同步方法处理器
+ */
 final class SynchronousMethodHandler implements MethodHandler {
 
     private static final long MAX_RESPONSE_BUFFER_SIZE = 8192L;
@@ -118,10 +120,11 @@ final class SynchronousMethodHandler implements MethodHandler {
      * @throws Throwable
      */
     Object executeAndDecode(RequestTemplate template) throws Throwable {
-        //走拦截器
+        //走拦截器,生成最终的请求
         Request request = targetRequest(template);
 
         if (logLevel != Logger.Level.NONE) {
+            //打印请求
             logger.logRequest(metadata.configKey(), logLevel, request);
         }
 
@@ -184,6 +187,12 @@ final class SynchronousMethodHandler implements MethodHandler {
         }
     }
 
+    /**
+     * 时间转化
+     *
+     * @param start
+     * @return
+     */
     long elapsedTime(long start) {
         return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
     }
@@ -196,6 +205,7 @@ final class SynchronousMethodHandler implements MethodHandler {
      * @return
      */
     Request targetRequest(RequestTemplate template) {
+        //适用到本方法处理的拦截器
         for (RequestInterceptor interceptor : requestInterceptors) {
             interceptor.apply(template);
         }
@@ -205,7 +215,7 @@ final class SynchronousMethodHandler implements MethodHandler {
     //解码response
     Object decode(Response response) throws Throwable {
         try {
-            //利用解析器去解析结果
+            //利用解析器去解析结果，返回用户期望的结果
             return decoder.decode(response, metadata.returnType());
         } catch (FeignException e) {
             throw e;
@@ -215,7 +225,7 @@ final class SynchronousMethodHandler implements MethodHandler {
     }
 
     /**
-     * methodHandler处理器
+     * 通过工厂方式来创建每个方法的处理器
      */
     static class Factory {
 

@@ -45,6 +45,7 @@ public interface Decoder {
             if (byte[].class.equals(type)) {
                 return Util.toByteArray(response.body().asInputStream());
             }
+            //default string decoder
             return super.decode(response, type);
         }
     }

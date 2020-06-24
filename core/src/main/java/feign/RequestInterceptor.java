@@ -13,9 +13,8 @@
  */
 package feign;
 
-/**
- * 请求拦截器
- */
 public interface RequestInterceptor {
+
     void apply(RequestTemplate template);
+
 }

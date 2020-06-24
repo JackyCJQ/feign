@@ -15,9 +15,6 @@ package feign.auth;
 
 import java.io.UnsupportedEncodingException;
 
-/**
- * base64加密
- */
 final class Base64 {
 
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
@@ -36,7 +33,6 @@ final class Base64 {
         return decode(in, in.length);
     }
 
-    //解密
     public static byte[] decode(byte[] in, int len) {
         // approximate output length
         int length = len / 4 * 3;
@@ -124,7 +120,6 @@ final class Base64 {
         return result;
     }
 
-    //加密
     public static String encode(byte[] in) {
         int length = (in.length + 2) * 4 / 3;
         byte[] out = new byte[length];

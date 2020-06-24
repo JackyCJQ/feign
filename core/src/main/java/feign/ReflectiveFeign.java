@@ -31,10 +31,15 @@ import java.util.Map.Entry;
 import static feign.Util.checkArgument;
 import static feign.Util.checkNotNull;
 
+/**
+ * Feign实现的唯一子类
+ */
 public class ReflectiveFeign extends Feign {
-
+    //接口解析
     private final ParseHandlersByName targetToHandlersByName;
+    //反射工厂实现类
     private final InvocationHandlerFactory factory;
+    //参数
     private final QueryMapEncoder queryMapEncoder;
 
     ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
@@ -52,7 +57,7 @@ public class ReflectiveFeign extends Feign {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T newInstance(Target<T> target) {
-        //
+        //解析对应的接口
         Map<String, MethodHandler> nameToHandler = targetToHandlersByName.apply(target);
         Map<Method, MethodHandler> methodToHandler = new LinkedHashMap<Method, MethodHandler>();
         //默认类型处理器
@@ -80,11 +85,12 @@ public class ReflectiveFeign extends Feign {
     }
 
     /**
-     * 默认的实现
+     * 反射实行类
      */
     static class FeignInvocationHandler implements InvocationHandler {
-
+        //目标
         private final Target target;
+        //接口中的方法
         private final Map<Method, MethodHandler> dispatch;
 
         FeignInvocationHandler(Target target, Map<Method, MethodHandler> dispatch) {
@@ -94,6 +100,7 @@ public class ReflectiveFeign extends Feign {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            //过滤掉这几个方法
             if ("equals".equals(method.getName())) {
                 try {
                     Object otherHandler = args.length > 0 && args[0] != null ? Proxy.getInvocationHandler(args[0]) : null;
@@ -106,7 +113,7 @@ public class ReflectiveFeign extends Feign {
             } else if ("toString".equals(method.getName())) {
                 return toString();
             }
-           //调用实际的处理方法
+            //调用各个方法的处理器
             return dispatch.get(method).invoke(args);
         }
 
@@ -177,7 +184,7 @@ public class ReflectiveFeign extends Feign {
                 } else {
                     buildTemplate = new BuildTemplateByResolvingArgs(md, queryMapEncoder);
                 }
-                //创建本地缓存
+                //每个方法创建一个缓存
                 result.put(md.configKey(), factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
             }
             return result;

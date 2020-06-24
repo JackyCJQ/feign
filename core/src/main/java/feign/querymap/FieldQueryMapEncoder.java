@@ -56,6 +56,12 @@ public class FieldQueryMapEncoder implements QueryMapEncoder {
         }
     }
 
+    /**
+     * 做一层缓存
+     *
+     * @param objectType
+     * @return
+     */
     private ObjectParamMetadata getMetadata(Class<?> objectType) {
         ObjectParamMetadata metadata = classToMetadata.get(objectType);
         if (metadata == null) {
@@ -65,7 +71,9 @@ public class FieldQueryMapEncoder implements QueryMapEncoder {
         return metadata;
     }
 
-    //存放了Object的字段信息
+    /**
+     * 存放了Object的字段信息
+     */
     private static class ObjectParamMetadata {
 
         private final List<Field> objectFields;

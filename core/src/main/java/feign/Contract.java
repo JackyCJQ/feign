@@ -42,9 +42,8 @@ public interface Contract {
 
         @Override
         public List<MethodMetadata> parseAndValidatateMetadata(Class<?> targetType) {
-            //校验不能为带范型的接口
-            checkState(targetType.getTypeParameters().length == 0, "Parameterized types unsupported: %s",
-                    targetType.getSimpleName());
+            //接口必须为不带范型的接口
+            checkState(targetType.getTypeParameters().length == 0, "Parameterized types unsupported: %s", targetType.getSimpleName());
             //校验仅仅支持继承一个接口的类
             checkState(targetType.getInterfaces().length <= 1, "Only single inheritance supported: %s",
                     targetType.getSimpleName());
@@ -66,7 +65,7 @@ public interface Contract {
                 MethodMetadata metadata = parseAndValidateMetadata(targetType, method);
                 //并且重写的方法还不支持
                 checkState(!result.containsKey(metadata.configKey()), "Overrides unsupported: %s", metadata.configKey());
-                //添加紧缓存】
+                //添加进缓存
                 result.put(metadata.configKey(), metadata);
             }
             return new ArrayList<>(result.values());
@@ -80,7 +79,7 @@ public interface Contract {
             MethodMetadata data = new MethodMetadata();
             //方法的返回类型
             data.returnType(Types.resolve(targetType, targetType, method.getGenericReturnType()));
-            //每个方法生成一个hash值
+            //每个方法生成一个唯一值
             data.configKey(Feign.configKey(targetType, method));
 
             if (targetType.getInterfaces().length == 1) {
@@ -94,13 +93,14 @@ public interface Contract {
             for (Annotation methodAnnotation : method.getAnnotations()) {
                 processAnnotationOnMethod(data, methodAnnotation, method);
             }
+            //验证方法的名字
             checkState(data.template().method() != null,
                     "Method %s not annotated with HTTP method type (ex. GET, POST)",
                     method.getName());
-            //获取方法上的信息
+            //获取参数上的注解
             Class<?>[] parameterTypes = method.getParameterTypes();
             Type[] genericParameterTypes = method.getGenericParameterTypes();
-            //获取方法中你的参数注解
+            //获取参数中的注解
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             int count = parameterAnnotations.length;
             for (int i = 0; i < count; i++) {

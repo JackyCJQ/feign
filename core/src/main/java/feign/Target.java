@@ -41,6 +41,11 @@ public interface Target<T> {
      */
     public Request apply(RequestTemplate input);
 
+    /**
+     * url硬编码实现
+     *
+     * @param <T>
+     */
     public static class HardCodedTarget<T> implements Target<T> {
 
         private final Class<T> type;
@@ -104,6 +109,7 @@ public interface Target<T> {
 
         @Override
         public String toString() {
+            //紧紧做了简单的区分
             if (name.equals(url)) {
                 return "HardCodedTarget(type=" + type.getSimpleName() + ", url=" + url + ")";
             }

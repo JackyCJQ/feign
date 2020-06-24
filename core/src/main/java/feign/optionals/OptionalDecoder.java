@@ -23,7 +23,6 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.Optional;
 
-//可选择的解码器
 public final class OptionalDecoder implements Decoder {
     final Decoder delegate;
 
@@ -34,6 +33,7 @@ public final class OptionalDecoder implements Decoder {
 
     @Override
     public Object decode(Response response, Type type) throws IOException {
+        //直接只用代理
         if (!isOptional(type)) {
             return delegate.decode(response, type);
         }
@@ -45,13 +45,12 @@ public final class OptionalDecoder implements Decoder {
         return Optional.ofNullable(delegate.decode(response, enclosedType));
     }
 
-    //判断是否是参数化类型的数据
     static boolean isOptional(Type type) {
         if (!(type instanceof ParameterizedType)) {
             return false;
         }
         ParameterizedType parameterizedType = (ParameterizedType) type;
-        //如果参数化类型为Optional类
+        //判断字段是否是Option包裹的
         return parameterizedType.getRawType().equals(Optional.class);
     }
 }
